@@ -87,7 +87,7 @@ def rasterize_text(text, wrapwidth, fontpath, fontsize, color) -> Image:
     return img
 
 
-def neptunfej(text, scale = 1, margin = (0, 0)) -> Image:
+def neptunfej(text, scale = 1, margin = (0, 0), reverse = False) -> Image:
     path = os.path.dirname(__file__)
     padding = 17, 13
     text_img = rasterize_text(text, 80, os.path.join(path, "assets/verdanab.ttf"), 12, (82, 86, 89, 255))
@@ -97,7 +97,9 @@ def neptunfej(text, scale = 1, margin = (0, 0)) -> Image:
         os.path.join(path, "assets/9sliced.png"),
         os.path.join(path, "assets/slicing.csv"),
     )
-    smile = Image.open(os.path.join(path, "assets/infopanel_smile.png"))
+
+    smilefile = "assets/infopanel_reversesmile.png" if reverse else "assets/infopanel_smile.png"
+    smile = Image.open(os.path.join(path, smilefile))
 
     fullwidht = speechbubble.width + smile.width + 2 * margin[0]
     fullheight = max(speechbubble.height, smile.height) + 2 * margin[1]
