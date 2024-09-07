@@ -1,6 +1,7 @@
-from PIL import Image, ImageDraw, ImageFont
+import os
 import csv
 import textwrap
+from PIL import Image, ImageDraw, ImageFont
 
 
 def nine_sliced(width, height, imagepath, slicingpath) -> Image:
@@ -86,19 +87,17 @@ def rasterize_text(text, wrapwidth, fontpath, fontsize, color) -> Image:
     return img
 
 
-nine_sliced(100, 100, "assets/9sliced.png", "assets/slicing.csv")
-
-
 def neptunfej(text, scale = 1, margin = (0, 0)) -> Image:
+    path = os.path.dirname(__file__)
     padding = 17, 13
-    text_img = rasterize_text(text, 80, "assets/verdanab.ttf", 12, (82, 86, 89, 255))
+    text_img = rasterize_text(text, 80, os.path.join(path, "assets/verdanab.ttf"), 12, (82, 86, 89, 255))
     speechbubble = nine_sliced(
         text_img.width + 2 * padding[0],
         text_img.height + 2 * padding[1],
-        "assets/9sliced.png",
-        "assets/slicing.csv",
+        os.path.join(path, "assets/9sliced.png"),
+        os.path.join(path, "assets/slicing.csv"),
     )
-    smile = Image.open("assets/infopanel_smile.png")
+    smile = Image.open(os.path.join(path, "assets/infopanel_smile.png"))
 
     fullwidht = speechbubble.width + smile.width + 2 * margin[0]
     fullheight = max(speechbubble.height, smile.height) + 2 * margin[1]
