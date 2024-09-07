@@ -73,7 +73,7 @@ def nine_sliced(width, height, imagepath, slicingpath) -> Image:
 
 
 def rasterize_text(text, wrapwidth, fontpath, fontsize, color) -> Image:
-    # TODO: wrap and justify text
+    # TODO: text hinting and justify alignment
     font = ImageFont.truetype(fontpath, fontsize)
     wrapper = textwrap.TextWrapper(width=wrapwidth)
     wrapped_text = wrapper.fill(text)
@@ -89,7 +89,7 @@ def rasterize_text(text, wrapwidth, fontpath, fontsize, color) -> Image:
 nine_sliced(100, 100, "assets/9sliced.png", "assets/slicing.csv")
 
 
-def neptunfej(text) -> Image:
+def neptunfej(text, scale = 1, margin = (0, 0)) -> Image:
     padding = 17, 13
     text_img = rasterize_text(text, 80, "assets/verdanab.ttf", 12, (82, 86, 89, 255))
     speechbubble = nine_sliced(
@@ -100,11 +100,15 @@ def neptunfej(text) -> Image:
     )
     smile = Image.open("assets/infopanel_smile.png")
 
-    fullwidht = speechbubble.width + smile.width
-    fullheight = max(speechbubble.height, smile.height)
+    fullwidht = speechbubble.width + smile.width + 2 * margin[0]
+    fullheight = max(speechbubble.height, smile.height) + 2 * margin[1]
     img = Image.new("RGBA", (fullwidht, fullheight), (255,) * 4)
 
-    img.paste(speechbubble, (smile.width - 1, 0))
-    img.alpha_composite(smile, (0, 0))
-    img.alpha_composite(text_img, (smile.width - 1 + padding[0], padding[1]))
+    img.paste(speechbubble, (smile.width - 1 + margin[0], 0 + margin[1]))
+    img.alpha_composite(smile, margin)
+    img.alpha_composite(text_img, (smile.width - 1 + padding[0] + margin[0], padding[1] + margin[1]))
+
+    if scale != 1:
+        img = img.resize((int(img.width * scale), int(img.height * scale)), Image.NEAREST)
+
     return img
